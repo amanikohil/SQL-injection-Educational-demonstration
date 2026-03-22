@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>ECCP - Accès Client</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ' OR ccp_code LIKE '% | ' OR '1'='1-->
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background-color: #f0efef; font-family: Arial, Helvetica, sans-serif; }
+
+.navbar { position: relative; background: linear-gradient(90deg, #004080, #0066cc, #004080); height: 65px; padding:0 80px; display:flex; justify-content:space-between; align-items:center; color:white; font-size:14px; letter-spacing:1px; z-index:1; }
+.logo { width:130px; height:130px; object-fit:contain; position:absolute; top:30px; left:100px; z-index:10; }
+.navbar .menu { display:flex; justify-content:center; gap:40px; flex:1; z-index:1; }
+.navbar a { color:white; text-decoration:none; }
+
+.header { padding:120px 120px 20px 120px; }
+.header h1 { font-family: 'Orbitron', sans-serif; font-size:42px; color:#0b3d6d; letter-spacing:3px; }
+.header h2 { margin-top:15px; font-family: 'Orbitron', sans-serif; font-size:22px; font-weight:400; color:#444; letter-spacing:2px; }
+.pink-line { margin-top:25px; height:4px; width:100%; background: linear-gradient(0,#ffce00,#ffe266,#ffce00); }
+
+.login-container { margin:60px auto; width:85%; background-color:#dcdcdc; border-radius:25px; border:1px solid #0b3d6d; padding:50px 50px 25px 50px; position:relative; font-family:'Orbitron', sans-serif; }
+.login-title { position:absolute; top:-22px; left:50%; transform:translateX(-50%); background:linear-gradient(0,#ffce00,#ffe266,#ffce00); padding:10px 40px; border-radius:25px; font-family:'Orbitron',sans-serif; color:#002c52; letter-spacing:1px; font-weight:700; }
+.form-row { display:flex; align-items:right; margin-bottom:20px; }
+.form-row label { width:320px; font-weight:bold; color:#555; font-size:16px; }
+.form-row input { width:500px; padding:12px; border-radius:6px; border:1px solid #bbb; font-size:14px; }
+.form-actions { margin-left:320px; display:flex; align-items:center; gap:20px; }
+.btn { background-color:#0b3d6d; color:white; padding:10px 30px; border:none; border-radius:6px; cursor:pointer; font-size:14px; font-family:'Orbitron',sans-serif; }
+.btn:hover { background-color:#082f56; }
+.forgot { color:#0b3d6d; text-decoration:none; font-size:14px; }
+
+/* MODAL */
+.modal { display: none; position: fixed; z-index:999; left:0; top:0; width:100%; height:100%; overflow:auto; background-color: rgba(0,0,0,0.4); }
+.modal-content { background-color:#fefefe; margin:100px auto; padding:30px; border:1px solid #888; width:40%; border-radius:15px; text-align:center; font-family:'Orbitron',sans-serif; box-shadow:0 5px 15px rgba(0,0,0,0.3); }
+.close-btn { background-color:#0b3d6d; color:white; padding:10px 25px; border:none; border-radius:6px; cursor:pointer; font-size:14px; margin-top:20px; }
+.close-btn:hover { background-color:#082f56; }
+</style>
+</head>
+
+<body>
+
+<img src="{{ url_for('static', filename='image.png') }}" alt="ECCP Logo" class="logo">
+
+<div class="navbar">
+    <div class="menu">
+        <a href="#">ACCUEIL</a>
+        <a href="#">EXTRAIT & RELEVÉ</a>
+        <a href="#">NOTIFICATION SMS</a>
+        <a href="#">CARTE VIP</a>
+        <a href="#">CARNET</a>
+    </div>
+    <div><a href="#">SE CONNECTER</a></div>
+</div>
+
+<div class="header">
+    <h1>ECCP - ALGERIE POSTE</h1>
+    <div class="pink-line"></div>
+    <h2>CONNECTEZ-VOUS À VOTRE COMPTE</h2>
+</div>
+
+<div class="login-container">
+    <div class="login-title">Details de connexion</div>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul style="margin-bottom:20px;">
+          {% for msg in messages %}
+            <li>{{ msg }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="/verify">
+        <div class="form-row">
+            <label>CCP (Sans la clé)</label>
+            <input type="text" name="ccp_code">
+        </div>
+
+        <div class="form-row">
+            <label>Mot de passe</label>
+            <input type="password" name="password">
+        </div>
+
+        <div class="form-actions">
+            <button class="btn">Se connecter</button>
+            <a href="#" class="forgot">Mot de passe oublié ?</a>
+        </div>
+    </form>
+</div>
+
+<!-- POPUP MODAL -->
+<div class="modal" style="display: {{ 'block' if show_modal|default(False) else 'none' }};">
+    <div class="modal-content">
+        <h2>Bienvenue, {{ user_code|default('') }}!</h2>
+        <p>Vous êtes maintenant connecté.</p>
+        <form method="GET" action="/logout">
+            <button class="close-btn">Se déconnecter</button>
+        </form>
+    </div>
+</div>
+
+
+</body>
+</html>
